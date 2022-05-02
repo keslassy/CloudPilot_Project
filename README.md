@@ -1,23 +1,22 @@
 # CloudPilot Project
-This git contain the components for CloudPilot Project.
+This git contains the components for the CloudPilot Project.
 1) Cloud proxy acceleration:
-    This Component can create one proxy or two-proxy acceleration for destination IP.  
-    In addition, the system can create network measurement for checking throughput and latency between different regions in different clouds platforms.
-    The test creates K8S clusters(Host,target) in different regions and performs iPerf3 tests.
-    the iPerf3 test has 3 types of flavors:
-    - **Direct** - Direct test between host to target.
-    - **TCP Splitting**-  Test between host to target via one proxy or two proxies server .  
-                The proxy server split the tcp connection using HAProxy.
-    - **TCP Forwarding**- Test between host to target via proxy server.
-                   The proxy server forward the tcp traffic using iptables rules.
+    This component can create one-proxy or two-proxy acceleration for a given destination IP.  
+    In addition, the system can create network measurements for checking throughput and latency between different regions in different clouds platforms.
+    The test creates K8S clusters (host,target) in different regions and performs iPerf3 tests.
+    The iPerf3 test has 3 types of flavors:
+    - **Direct** - Direct test from (source) host to target.
+    - **TCP Splitting**-  Test from  host to target via one-proxy or two-proxy server.  
+                The proxy server splits the TCP connection using HAProxy.
+    - **TCP Forwarding**- Test from host to target via proxy server.
+                   The proxy server forwards the TCP traffic using iptables rules.
 
     ![alt text](./ReadMe/System_Diagram.png)
-2) Cloud proxy allocation Algorithms:
-This component contains simulation and algorithms for choosing the best proxies location.
+2) Cloud proxy allocation algorithms:
+This component contains simulation and algorithms for choosing the best proxy locations.
 There are five different algorithms: Flow greedy FCT, Flow greedy cost, one proxy greedy, two proxy greedy
 and two proxy greedy with RollBack.
-With this algorithm, you can find the best location for placing proxies acceleration that can be done 
-with the first component.  
+The algorithms in this second component help find good locations for placing the acceleration proxies, which can then be implemented using the first component.  
 
 ## Supported cloud platforms 
 Currently the following platforms are supported:
@@ -30,21 +29,21 @@ Currently the following platforms are supported:
 ### Folders Description
 The project folders are:
 - **forwarding proxy** - Contain docker and YAMLs files to create forwarding proxy image, K8S deployment and LoadBalancer.  
-- **HAProxy**          - Contain docker and YAMLs files to create custom HAProxy image, K8S deployment and LoadBalancer.  
-- **iPerf3**           - Contain YAMLs files to create iPerf3 server deployment,iPerf3 client and LoadBalancer.  
-- **project_metadata** - contain metadata.json -(save all meta data for each test (Clusters, Regions, Platforms, IPs etc.))
+- **HAProxy**          - Contains docker and YAMLs files to create custom HAProxy image, K8S deployment and LoadBalancer.  
+- **iPerf3**           - Contains YAMLs files to create iPerf3 server deployment, iPerf3 client and LoadBalancer.  
+- **project_metadata** - Contains metadata.json -(save all meta data for each test (Clusters, Regions, Platforms, IPs etc.))
                          and api functions to update the meta_data.  
-- **ReadMe**           - Contain files for project README.
-- **ReadMe**           - Contain files for project README.
-- **Steps**            - Contain scripts for each step of the test: 
+- **ReadMe**           - Contains files for project README.
+- **ReadMe**           - Contains files for project README.
+- **Steps**            - Contains scripts for each step of the test: 
     - Cluster create 
     - Cluster setup 
     - Test Run
     - Cluster delete
 - **test**             - Contains the following files/folders: 
-    - script folder- test files that call all the necessary steps for each test(create, set, run, delete).
-    - Examples -Example tests using script files from the script folder
-    - Cloud_Regions folder - contains JSON files with the region prefix for each platform.
+    - Script folder: Test files that call all the necessary steps for each test (create, set, run, delete).
+    - Examples: Example tests using script files from the script folder
+    - Cloud_Regions folder: Contains JSON files with the region prefix for each platform.
 
 ## Environment setup
 Before running a test, do the following preparations:
@@ -72,69 +71,70 @@ To run a network measurement test you need to do the following steps:
     - To run iPerf3 test between HOST to TARGET via  PROXY (forwarding proxy and splitting proxy(HAPROXY)) use  ```steps/run_k8s_baseline_test.py``` 
 - **Delete iPerf3 test** : Delete all clusters using ```steps/delete_k8s_cluster.py```
 
-There are four types of operation can be done with cloud proxy acceleration:
+There are four types of operations can be done with the cloud proxy acceleration:
 1) One proxy-acceleration test:
-    This test create K8S cluster for host,target and proxy.
-    The test run a iPerf3 test between the host and target via acceleration proxy.
+    This test creates a K8S cluster for host, target and proxy.
+    The test runs an iPerf3 test between the host and target via an acceleration proxy.
     Before running the test please update the regions and cloud providers of the host, target and proxy
     in the file ```test/scripts/single_test_one_proxy_acceleration.py ```.
     To run the test run the command:  
     ```python3 tests/scripts/single_test_one_proxy_acceleration.py```
 
 2) Two proxy-acceleration test:
-    This test create K8S cluster for host,target and two proxies.
-    The test run a iPerf3 test between the host and target via two acceleration proxy.
+    This test creates a K8S cluster for host, target and two proxies.
+    The test runs an iPerf3 test between the host and target via two acceleration proxy.
     Before running the test please update the regions and cloud providers of the host, target and proxies
     in the file ```test/scripts/single_test_two_proxy_acceleration.py ```.
     To run the test run the command:  
     ```python3 tests/scripts/single_test_two_proxy_acceleration.py```
 
 3) Creating one proxy-acceleration :
-   This component create K8S cluster proxy acceleration for given destination IP. 
+   This component creates a K8S cluster proxy acceleration for a given destination IP. 
     Before running the component please update the region and cloud provider of the proxy
     in the file ```test/scripts/one_proxy_acceleration.py ```.
     To run the test run the command:  
     ```python3 tests/scripts/one_proxy_acceleration.py```
 
 4) Creating two proxy-acceleration :
-   This component create two K8S cluster proxies acceleration for given destination IP. 
+   This component creates two K8S cluster proxies acceleration for given destination IP. 
     Before running the component please update the regions and cloud provider of the proxies
     in the file ```test/scripts/two_proxy_acceleration.py ```.
     To run the test run the command:  
     ```python3 tests/scripts/two_proxy_acceleration.py```
-- Additional tests examples that use  ```test/scripts/Examples``` can be found in ```test``` folder. 
+- Additional test examples that use  ```test/scripts/Examples``` can be found in ```test``` folder. 
 
-## How to run algorithms prediction
+## How to run the algorithm prediction
 To run the algorithm prediction simulation please update the file ```algorithms/tests/cloud_proxy_prediction/cliud_proxy_prediction.py ```
 with the following parameters:
 - Algorithm name
 - Budget
 - Cloud provider for proxies
-- Servers locations and RTT from the closest cloud region
-- Servers couples (source and destination)
+- Server locations and RTT from the closest cloud region
+- Server couples (source and destination)
+
 To run the algorithm prediction simulation please run the file  ```algorithms/tests/cloud_proxy_prediction/cliud_proxy_prediction.py ```  
 More details can be found in the file.
-## How to run algorithms simulation
-This component contain simulation for the five algorithms for proxy placement routing:
+## How to run the algorithm simulation
+This component contains simulation for the five algorithms for proxy placement routing:
 Flow greedy FCT, Flow greedy cost, one proxy greedy, two proxy greedy
 and two proxy greedy with RollBack.  
-There are four use cases for simulation: one-to-many,many-to-many,many one-to-one an many one-to-many.
-To run the algorithm simulation is recommended to use python IDE like PyCharm.  
-1) One-to-many - to run simulation for use case one-to-many please run 
+There are four use cases for simulation: one-to-many,many-to-many,many one-to-one and many one-to-many.
+To run the algorithm simulation, it is recommended to use a python IDE like PyCharm.  
+1) One-to-many - to run the simulation for use case one-to-many please run 
   the file ```algorithms/tests/Example_one_to_many_simulation_test.py ```  
   More details can be found in the file.
-2) Many-to-many - to run simulation for use case many-to-many please run 
+2) Many-to-many - to run the simulation for use case many-to-many please run 
   the file ```algorithms/tests/Example_many_to_many_simulation_test.py ```  
   More details can be found in the file.
-3) Many one-to-one - to run simulation for use case many one-to-one please run 
+3) Many one-to-one - to run the simulation for use case many one-to-one please run 
   the file ```algorithms/tests/Example_many_one_to_one_simulation_test.py ```  
   More details can be found in the file.
-4) Many one-to-many (localized CDN) - to run simulation for use case many one-to-one please run 
+4) Many one-to-many (localized CDN) - to run the simulation for use case many one-to-one please run 
   the file ```algorithms/tests/Example_localized_cdn_simulation_test.py ```  
   More details can be found in the file.
 
 ## Thanks
-This platform is using the following tools:
+This platform relies on the following tools:
 - iPerf3 tool   (version: iPerf3 3.9)
 - HAProxy Load Balancer (version:latest)
 - Ubuntu docker image (version:latest).
